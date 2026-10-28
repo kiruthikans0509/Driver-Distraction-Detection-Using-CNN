@@ -1,0 +1,283 @@
+======================================================================
+DRIVER MONITORING PROJECT -- SESSION 3 DATASET AUDIT REPORT
+======================================================================
+Timestamp: 2026-10-03 10:05:00
+Audit Scope: Session 3 (data/webcam_distraction/session3_raw/)
+Cross-Audit References: Session 1 (data/webcam_distraction/c0..c9)
+                        Session 2 (data/webcam_distraction/session2/)
+Audit Type: Read-only Data Integrity, Duplication & Leakage Analysis
+
+======================================================================
+1. SESSION 3 DATASET SUMMARY
+======================================================================
+- Root Directory on Disk: data/webcam_distraction/session3_raw/
+  (Note: Subdirectories organized into class and person folders as planned)
+- Total Files Audited: 4,069 images
+- Total Expected Classes: 10 (c0 through c9) -- ALL PRESENT
+- Total Contributing People in Session 3: 4
+  * me (User)
+  * friend 3
+  * friend 4
+  * friend 5
+- Subfolder Hierarchy: Verified compliant.
+  * Structure: session3_raw/<class>/<person>/<filename>.jpg
+  * No unexpected root or class-level files found.
+  * No unexpected extra directories or orphaned files found.
+
+======================================================================
+2. EXACT CLASS COUNTS (SESSION 3)
+======================================================================
+c0 (Safe driving)          :   400 images ( 9.83%)
+c1 (Texting - right)       :   415 images (10.20%)
+c2 (Talking on phone - right): 422 images (10.37%)
+c3 (Texting - left)        :   416 images (10.22%)
+c4 (Talking on phone - left):  402 images ( 9.88%)
+c5 (Operating radio)       :   402 images ( 9.88%)
+c6 (Drinking)              :   406 images ( 9.98%)
+c7 (Reaching behind)       :   402 images ( 9.88%)
+c8 (Hair/makeup)           :   402 images ( 9.88%)
+c9 (Talking to passenger)  :   402 images ( 9.88%)
+--------------------------------------------------
+Total Session 3 Images     : 4,069 images (100.0%)
+
+======================================================================
+3. EXACT PERSON COUNTS (SESSION 3)
+======================================================================
+friend 3 : 1,024 images ( 25.17%)
+friend 4 :   993 images ( 24.40%)
+friend 5 :   971 images ( 23.86%)
+me       : 1,081 images ( 26.57%)
+--------------------------------------------------
+Total    : 4,069 images (100.0%)
+
+======================================================================
+4. PERSON x CLASS MATRIX (SESSION 3)
+======================================================================
+Person             c0   c1   c2   c3   c4   c5   c6   c7   c8   c9   TOTAL
+-------------------------------------------------------------------------
+friend 3           98  102  114  107  113  101  104   83   99  103   1,024
+friend 4          113   96   97   90   95  101  101  101  100   99     993
+friend 5           85  107  100  106   93   97   98   96   96   93     971
+me                104  110  111  113  101  103  103  122  107  107   1,081
+-------------------------------------------------------------------------
+TOTAL             400  415  422  416  402  402  406  402  402  402   4,069
+
+======================================================================
+5. IMAGE INTEGRITY
+======================================================================
+- Total Files Audited        : 4,069
+- Valid Image Files (.jpg)   : 4,069 (100.0%)
+- Corrupted/Unreadable Images: 0 (0.0%)
+- Non-Image Files            : 0 (0.0%)
+- Zero-Byte Files            : 0 (0.0%)
+- Image Dimensions           : 640 x 480 (4,069 images, 100.0%)
+- Unusual Dimensions         : 0 (0.0%)
+- Color Channels             : 3 channels / RGB (4,069 images, 100.0%)
+- Suspicious Files           : None detected.
+
+======================================================================
+6. DUPLICATE ANALYSIS (CRYPTOGRAPHIC SHA-256)
+======================================================================
+Cryptographic SHA-256 hashes were calculated for:
+  - All 4,069 images in Session 3
+  - All 1,526 images in Session 1
+  - All 1,026 images in Session 2
+Total hashes checked: 6,621 images.
+
+Results:
+- Duplicates within same person/class (Session 3) : 0
+- Duplicates across different classes (Session 3) : 0
+- Duplicates across different people (Session 3)  : 0
+- Duplicates between Session 3 and Session 1      : 0
+- Duplicates between Session 3 and Session 2      : 0
+
+Official Result: 0 exact duplicate groups found.
+
+======================================================================
+7. TEMPORAL BURST & NEAR-DUPLICATE ANALYSIS
+======================================================================
+Near-Duplicate (Perceptual Hash / dHash):
+- Cross-class exact dHash collisions: 0
+- Cross-person exact dHash collisions: 0
+- Consecutive frame dHash distance = 0: 540 pairs (typical consecutive
+  frames within burst during steady driver posture).
+
+Temporal Burst Grouping (10s threshold & index reset):
+- Total Bursts Formed in Session 3 : 48 bursts across 40 person-class combos
+- Minimum Burst Size              : 9 frames
+- Maximum Burst Size              : 122 frames
+- Mean Burst Size                 : 84.77 frames
+- Median Burst Size               : 97 frames
+- Burst Breakdown per Person:
+  * friend 3 : 11 bursts (avg 93.1 frames/burst)
+  * friend 4 : 10 bursts (avg 99.3 frames/burst)
+  * friend 5 : 11 bursts (avg 88.3 frames/burst)
+  * me       : 16 bursts (avg 67.6 frames/burst)
+
+======================================================================
+8. CROSS-PERSON / CROSS-CLASS LEAKAGE ANALYSIS
+======================================================================
+- Cross-person exact/perceptual duplicates: 0 detected.
+- Cross-class exact/perceptual duplicates: 0 detected.
+- Cross-session leakage with Sessions 1 & 2: 0 detected.
+- Timestamp Overlaps:
+  * Start and end timestamps of all 48 bursts were analyzed.
+  * Overlaps between different classes for the same person: 0
+  * Chronology shows clean, sequential class progression.
+  * No recording burst was split or misfiled into multiple classes.
+
+======================================================================
+9. CLASS BALANCE
+======================================================================
+- Minimum Class Count : 400 images (c0 - Safe driving)
+- Maximum Class Count : 422 images (c2 - Talking on phone - right)
+- Class Imbalance Ratio (Max / Min): 1.0550
+- Distribution: Each class constitutes between 9.83% and 10.37% of the data.
+- Assessment: Exceptional balance. Session 3 is virtually balanced 1:1
+  across all 10 classes.
+
+======================================================================
+10. PERSON BALANCE
+======================================================================
+- friend 3 : 1,024 images ( 25.17%)
+- friend 4 :   993 images ( 24.40%)
+- friend 5 :   971 images ( 23.86%)
+- me       : 1,081 images ( 26.57%)
+- Person Contribution Range: 23.86% to 26.57%
+- Assessment: Highly uniform. Each of the four contributors accounts for
+  roughly one quarter of the entire Session 3 dataset.
+- Important Identity Note:
+  "me" in Session 3 corresponds to the same physical person as "me"
+  in Session 1 (User).
+
+======================================================================
+11. COMBINED DATASET SUMMARY (SESSIONS 1 + 2 + 3)
+======================================================================
+Dataset Breakdown:
+- Session 1 (User / me)  : 1,526 images
+- Session 2 (Friends 1 & 2): 1,026 images
+  * Friend 1: 512 images
+  * Friend 2: 514 images
+- Existing Total          : 2,552 images
+- Session 3 (Audited)     : 4,069 images
+--------------------------------------------------
+GRAND TOTAL DATASET SIZE  : 6,621 images
+
+Unique Person Representation (6 People Total):
+1. User / me (Session 1 + Session 3 me) : 2,607 images ( 39.37%)
+2. Friend 1 (Session 2)                :   512 images (  7.73%)
+3. Friend 2 (Session 2)                :   514 images (  7.76%)
+4. Friend 3 (Session 3)                : 1,024 images ( 15.47%)
+5. Friend 4 (Session 3)                :   993 images ( 15.00%)
+6. Friend 5 (Session 3)                :   971 images ( 14.67%)
+--------------------------------------------------
+Total Across All 6 People               : 6,621 images (100.0%)
+
+Combined Class Distribution across All Sessions:
+c0 (Safe driving)          :   650 images ( 9.82%)
+c1 (Texting - right)       :   670 images (10.12%)
+c2 (Talking on phone - right): 677 images (10.23%)
+c3 (Texting - left)        :   669 images (10.10%)
+c4 (Talking on phone - left):  659 images ( 9.95%)
+c5 (Operating radio)       :   660 images ( 9.97%)
+c6 (Drinking)              :   665 images (10.04%)
+c7 (Reaching behind)       :   660 images ( 9.97%)
+c8 (Hair/makeup)           :   650 images ( 9.82%)
+c9 (Talking to passenger)  :   661 images ( 9.98%)
+--------------------------------------------------
+Combined Imbalance Ratio (Max / Min): 677 / 650 = 1.0415 (Virtually 1:1)
+
+======================================================================
+12. RECOMMENDED V4 DATASET SPLIT DESIGN
+======================================================================
+Constraints:
+- Random 80/20 image-level split is STRICTLY DISALLOWED due to temporal
+  correlation among consecutive frames.
+- "me" in Session 1 and "me" in Session 3 MUST be treated as one person.
+- Temporal bursts must remain atomic (never split across train and val/test).
+
+Recommended Split Architecture:
+1. Strategy 1 -- Person-Held-Out Benchmark Split (Recommended for V4):
+   - Training Set (4 People):
+     * User / me (S1 + S3) : 2,607 images
+     * Friend 3 (S3)       : 1,024 images
+     * Friend 4 (S3)       :   993 images
+     * Friend 1 (S2)       :   512 images
+     Total Train           : 5,136 images (77.57%)
+   - Validation Set (1 Person - Unseen during train):
+     * Friend 2 (S2)       :   514 images ( 7.76%)
+   - Test Set (1 Person - Completely unseen until final benchmark):
+     * Friend 5 (S3)       :   971 images (14.67%)
+
+2. Strategy 2 -- Stratified Temporal Group Split:
+   - Chunk each burst into 10-image sub-groups (matching V3 protocol).
+   - Stratified group splitting 80/20 ensuring all 10 classes and all
+     6 people are represented proportionally in both train and val,
+     while strictly isolating sub-group IDs to prevent temporal leakage.
+
+======================================================================
+13. RECOMMENDED CROSS-PERSON GENERALIZATION DESIGN
+======================================================================
+With 6 distinct subjects in the expanded dataset, evaluate cross-driver
+robustness systematically:
+1. Leave-One-Person-Out (LOPO) Cross-Validation:
+   Run 6 evaluation folds, rotating each of the 6 individuals as the test set:
+   - Fold 1: Test = Friend 1 (512 imgs), Train = remaining 5 (6,109 imgs)
+   - Fold 2: Test = Friend 2 (514 imgs), Train = remaining 5 (6,107 imgs)
+   - Fold 3: Test = Friend 3 (1,024 imgs), Train = remaining 5 (5,597 imgs)
+   - Fold 4: Test = Friend 4 (993 imgs), Train = remaining 5 (5,628 imgs)
+   - Fold 5: Test = Friend 5 (971 imgs), Train = remaining 5 (5,650 imgs)
+   - Fold 6: Test = User/me (2,607 imgs), Train = remaining 5 (4,014 imgs)
+2. Evaluation Metric Priority:
+   - Focus on Macro F1-score and class-specific recall on unseen subjects.
+   - Pay special attention to historically weak classes (c2, c7, c8, c9).
+
+======================================================================
+14. V4 TRAINING RECOMMENDATIONS
+======================================================================
+1. Dataset Sufficiency:
+   - Dataset expanded by +159% (from 2,552 to 6,621 images).
+   - Driver count doubled from 3 to 6 unique subjects.
+   - Dataset volume and diversity are fully sufficient to proceed with V4.
+2. Class Balancing:
+   - Combined class distribution has an imbalance ratio of only 1.0415.
+   - No synthetic oversampling or heavy class weighting is necessary.
+3. Augmentations:
+   - Maintain V3 augmentation suite: slight rotation (+/-10 deg), mild
+     brightness/contrast jitter, slight zoom (+/-10%).
+   - HORIZONTAL FLIPPING MUST REMAIN STRICTLY DISABLED:
+     Classes c1/c3 (Texting right vs. left) and c2/c4 (Phone right vs. left)
+     are directional. Mirroring frames inverts ground truth labels.
+4. Model Architecture & Transfer Learning:
+   - Maintain MobileNetV2 backbone for low-latency live webcam inference.
+   - Recommended starting checkpoint: distraction_cnn_webcam_v3_best.keras.
+   - Two-phase training:
+     Phase 1: Train classification head with frozen backbone.
+     Phase 2: Fine-tune top 25-30% of MobileNetV2 at low learning rate (1e-5).
+
+======================================================================
+15. ISSUES REQUIRING ATTENTION
+======================================================================
+1. On-Disk Directory Path:
+   - The audited Session 3 files are stored under:
+     data/webcam_distraction/session3_raw/
+   - In accordance with strict safety rules, no directories were renamed or moved.
+   - When preparing the V4 dataset loader, configure the Session 3 path to
+     target 'session3_raw' or adjust path configuration accordingly.
+2. Burst Granularity:
+   - Because single bursts contain up to 100-120 frames, burst-level splitting
+     or 10-image sub-chunking (as in V3) must be employed to maintain fine
+     granularity during training/validation partitioning.
+
+======================================================================
+16. FINAL GO / NO-GO ASSESSMENT FOR V4 PREPARATION
+======================================================================
+Final Assessment: GO (CLEAR PASS)
+
+Justification:
+- Image Integrity: 100% valid (0 corrupt, 0 zero-byte, 0 dimensional outliers).
+- Duplication: 0 exact duplicate groups across all 6,621 images.
+- Leakage: 0 cross-class, cross-person, or cross-session leakage.
+- Balance: Imbalance ratio is 1.055 (Session 3) and 1.0415 (Combined).
+- Diversity: Successfully doubled unique driver count from 3 to 6 individuals.
+The dataset is exceptionally clean and fully approved for V4 experiment preparation.

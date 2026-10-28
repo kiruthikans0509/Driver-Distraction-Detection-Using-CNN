@@ -1,0 +1,308 @@
+{
+  "by_person": {
+    "friend 1": {
+      "accuracy": 0.6829268292682927,
+      "n_samples": 82,
+      "correct": 56,
+      "total": 82
+    },
+    "friend 2": {
+      "accuracy": 0.7073170731707317,
+      "n_samples": 82,
+      "correct": 58,
+      "total": 82
+    },
+    "friend 3": {
+      "accuracy": 0.3263157894736842,
+      "n_samples": 190,
+      "correct": 62,
+      "total": 190
+    },
+    "friend 4": {
+      "accuracy": 0.2857142857142857,
+      "n_samples": 196,
+      "correct": 56,
+      "total": 196
+    },
+    "me": {
+      "accuracy": 0.685823754789272,
+      "n_samples": 522,
+      "correct": 358,
+      "total": 522
+    }
+  },
+  "by_class": {
+    "0": {
+      "accuracy": 0.8666666666666667,
+      "n_samples": 90,
+      "correct": 78,
+      "total": 90
+    },
+    "1": {
+      "accuracy": 0.6120689655172413,
+      "n_samples": 116,
+      "correct": 71,
+      "total": 116
+    },
+    "2": {
+      "accuracy": 0.4444444444444444,
+      "n_samples": 108,
+      "correct": 48,
+      "total": 108
+    },
+    "3": {
+      "accuracy": 0.6759259259259259,
+      "n_samples": 108,
+      "correct": 73,
+      "total": 108
+    },
+    "4": {
+      "accuracy": 0.6818181818181818,
+      "n_samples": 110,
+      "correct": 75,
+      "total": 110
+    },
+    "5": {
+      "accuracy": 0.8545454545454545,
+      "n_samples": 110,
+      "correct": 94,
+      "total": 110
+    },
+    "6": {
+      "accuracy": 0.42452830188679247,
+      "n_samples": 106,
+      "correct": 45,
+      "total": 106
+    },
+    "7": {
+      "accuracy": 0.24166666666666667,
+      "n_samples": 120,
+      "correct": 29,
+      "total": 120
+    },
+    "8": {
+      "accuracy": 0.4020618556701031,
+      "n_samples": 97,
+      "correct": 39,
+      "total": 97
+    },
+    "9": {
+      "accuracy": 0.35514018691588783,
+      "n_samples": 107,
+      "correct": 38,
+      "total": 107
+    }
+  },
+  "by_person_class": {
+    "friend 1": {
+      "0": {
+        "accuracy": 1.0,
+        "n_samples": 1
+      },
+      "1": {
+        "accuracy": 0.5,
+        "n_samples": 10
+      },
+      "2": {
+        "accuracy": 1.0,
+        "n_samples": 1
+      },
+      "3": {
+        "accuracy": 1.0,
+        "n_samples": 10
+      },
+      "4": {
+        "accuracy": 0.8,
+        "n_samples": 10
+      },
+      "5": {
+        "accuracy": 0.8,
+        "n_samples": 10
+      },
+      "6": {
+        "accuracy": 0.5,
+        "n_samples": 10
+      },
+      "7": {
+        "accuracy": 0.3,
+        "n_samples": 10
+      },
+      "8": {
+        "accuracy": 0.7,
+        "n_samples": 10
+      },
+      "9": {
+        "accuracy": 0.8,
+        "n_samples": 10
+      }
+    },
+    "friend 2": {
+      "0": {
+        "accuracy": 1.0,
+        "n_samples": 9
+      },
+      "1": {
+        "accuracy": 0.6,
+        "n_samples": 10
+      },
+      "2": {
+        "accuracy": 0.3,
+        "n_samples": 10
+      },
+      "3": {
+        "accuracy": 0.8,
+        "n_samples": 10
+      },
+      "4": {
+        "accuracy": 0.9,
+        "n_samples": 10
+      },
+      "5": {
+        "accuracy": 1.0,
+        "n_samples": 10
+      },
+      "6": {
+        "accuracy": 1.0,
+        "n_samples": 2
+      },
+      "7": {
+        "accuracy": 0.9,
+        "n_samples": 10
+      },
+      "8": {
+        "accuracy": 0.0,
+        "n_samples": 1
+      },
+      "9": {
+        "accuracy": 0.2,
+        "n_samples": 10
+      }
+    },
+    "friend 3": {
+      "0": {
+        "accuracy": 0.45,
+        "n_samples": 20
+      },
+      "1": {
+        "accuracy": 0.25,
+        "n_samples": 20
+      },
+      "2": {
+        "accuracy": 0.05,
+        "n_samples": 20
+      },
+      "3": {
+        "accuracy": 0.5294117647058824,
+        "n_samples": 17
+      },
+      "4": {
+        "accuracy": 0.35,
+        "n_samples": 20
+      },
+      "5": {
+        "accuracy": 0.65,
+        "n_samples": 20
+      },
+      "6": {
+        "accuracy": 0.21428571428571427,
+        "n_samples": 14
+      },
+      "7": {
+        "accuracy": 0.25,
+        "n_samples": 20
+      },
+      "8": {
+        "accuracy": 0.42105263157894735,
+        "n_samples": 19
+      },
+      "9": {
+        "accuracy": 0.1,
+        "n_samples": 20
+      }
+    },
+    "friend 4": {
+      "0": {
+        "accuracy": 0.95,
+        "n_samples": 20
+      },
+      "1": {
+        "accuracy": 0.0,
+        "n_samples": 16
+      },
+      "2": {
+        "accuracy": 0.05,
+        "n_samples": 20
+      },
+      "3": {
+        "accuracy": 0.3,
+        "n_samples": 20
+      },
+      "4": {
+        "accuracy": 0.05,
+        "n_samples": 20
+      },
+      "5": {
+        "accuracy": 0.65,
+        "n_samples": 20
+      },
+      "6": {
+        "accuracy": 0.4,
+        "n_samples": 20
+      },
+      "7": {
+        "accuracy": 0.0,
+        "n_samples": 20
+      },
+      "8": {
+        "accuracy": 0.3,
+        "n_samples": 20
+      },
+      "9": {
+        "accuracy": 0.1,
+        "n_samples": 20
+      }
+    },
+    "me": {
+      "0": {
+        "accuracy": 1.0,
+        "n_samples": 40
+      },
+      "1": {
+        "accuracy": 0.9166666666666666,
+        "n_samples": 60
+      },
+      "2": {
+        "accuracy": 0.7368421052631579,
+        "n_samples": 57
+      },
+      "3": {
+        "accuracy": 0.7843137254901961,
+        "n_samples": 51
+      },
+      "4": {
+        "accuracy": 1.0,
+        "n_samples": 50
+      },
+      "5": {
+        "accuracy": 1.0,
+        "n_samples": 50
+      },
+      "6": {
+        "accuracy": 0.45,
+        "n_samples": 60
+      },
+      "7": {
+        "accuracy": 0.2,
+        "n_samples": 60
+      },
+      "8": {
+        "accuracy": 0.3829787234042553,
+        "n_samples": 47
+      },
+      "9": {
+        "accuracy": 0.5106382978723404,
+        "n_samples": 47
+      }
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "model": "V3",
+  "model_path": "C:\\Users\\kiruthikan S\\Desktop\\driver_monitoring\\models\\distraction_cnn_webcam_v3_best.keras",
+  "test_csv": "C:\\Users\\kiruthikan S\\Desktop\\driver_monitoring\\data\\v4_splits\\test_unseen_person.csv",
+  "num_samples": 971,
+  "accuracy": 0.2451081359423275,
+  "macro_precision": 0.4638542184169265,
+  "macro_recall": 0.24795557756495473,
+  "macro_f1": 0.21582226144877398,
+  "weighted_f1": 0.223825246362919,
+  "per_class": {
+    "Safe driving": {
+      "precision": 0.11455525606469003,
+      "recall": 1.0,
+      "f1": 0.20556227327690446,
+      "support": 85
+    },
+    "Texting - right": {
+      "precision": 0.79,
+      "recall": 0.7383177570093458,
+      "f1": 0.7632850241545893,
+      "support": 107
+    },
+    "Talking on phone - right": {
+      "precision": 1.0,
+      "recall": 0.16,
+      "f1": 0.27586206896551724,
+      "support": 100
+    },
+    "Texting - left": {
+      "precision": 0.49019607843137253,
+      "recall": 0.2358490566037736,
+      "f1": 0.3184713375796178,
+      "support": 106
+    },
+    "Talking on phone - left": {
+      "precision": 0.5882352941176471,
+      "recall": 0.10752688172043011,
+      "f1": 0.18181818181818182,
+      "support": 93
+    },
+    "Operating radio": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 97
+    },
+    "Drinking": {
+      "precision": 1.0,
+      "recall": 0.16326530612244897,
+      "f1": 0.2807017543859649,
+      "support": 98
+    },
+    "Reaching behind": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 96
+    },
+    "Hair/makeup": {
+      "precision": 0.1,
+      "recall": 0.020833333333333332,
+      "f1": 0.034482758620689655,
+      "support": 96
+    },
+    "Talking to passenger": {
+      "precision": 0.5555555555555556,
+      "recall": 0.053763440860215055,
+      "f1": 0.09803921568627451,
+      "support": 93
+    }
+  },
+  "confusion_matrix": [
+    [
+      85,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      24,
+      79,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      65,
+      4,
+      16,
+      0,
+      6,
+      0,
+      0,
+      0,
+      9,
+      0
+    ],
+    [
+      65,
+      16,
+      0,
+      25,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      72,
+      0,
+      0,
+      8,
+      10,
+      0,
+      0,
+      0,
+      0,
+      3
+    ],
+    [
+      93,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      73,
+      0,
+      0,
+      0,
+      1,
+      0,
+      16,
+      0,
+      8,
+      0
+    ],
+    [
+      96,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      84,
+      0,
+      0,
+      9,
+      0,
+      0,
+      0,
+      0,
+      2,
+      1
+    ],
+    [
+      85,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      5
+    ]
+  ]
+}

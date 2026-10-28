@@ -1,0 +1,55 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# IDE settings
+.vscode/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+temp/
+tmp/
+
+# Dataset - exclude collected webcam images
+data/
+dataset/
+datasets/
+
+# Model training checkpoints
+*.weights.h5
+*.ckpt
+
+.devin/
+
+# Local development configuration
+.devin/
+
+# Experimental CNN checkpoints
+models/distraction_cnn.keras
+models/distraction_cnn_lopo_*.keras
+models/distraction_cnn_webcam_best.keras
+models/distraction_cnn_webcam_finetuned.keras
+models/distraction_cnn_webcam_v2.keras
+models/distraction_cnn_webcam_v2_best.keras
+models/distraction_cnn_webcam_v3.keras
+models/distraction_cnn_webcam_v4.keras
+models/distraction_cnn_webcam_v4_best.keras
+models/distraction_cnn_webcam_v5_p1_best.keras
+models/distraction_cnn_webcam_v5_p2_best.keras
+models/*.weights.h5

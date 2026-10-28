@@ -1,0 +1,20 @@
+{
+  "session2": {
+    "mean_brightness": 119.91085677083333,
+    "std_brightness": 12.00867171101467,
+    "mean_contrast": 63.26067925050679,
+    "std_contrast": 2.1359919591289294,
+    "mean_face_position": 0.43158263149088116,
+    "std_face_position": 0.0094152139542041,
+    "sample_count": 10
+  },
+  "session3_raw": {
+    "mean_brightness": 160.70745670572916,
+    "std_brightness": 3.5944153595459696,
+    "mean_contrast": 51.536612518744334,
+    "std_contrast": 1.173713541411567,
+    "mean_face_position": 0.4952365014303071,
+    "std_face_position": 0.0012982274077694563,
+    "sample_count": 10
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "friend 1": {
+    "v3": {
+      "accuracy": 0.6219512195121951,
+      "macro_f1": 0.5578643578643578,
+      "n_samples": 82
+    },
+    "v4": {
+      "accuracy": 0.6829268292682927,
+      "macro_f1": 0.6401474049300135,
+      "per_class_recall": {
+        "Safe driving": 1.0,
+        "Texting - right": 0.5,
+        "Talking on phone - right": 1.0,
+        "Texting - left": 1.0,
+        "Talking on phone - left": 0.8,
+        "Operating radio": 0.8,
+        "Drinking": 0.5,
+        "Reaching behind": 0.3,
+        "Hair/makeup": 0.7,
+        "Talking to passenger": 0.8
+      },
+      "n_samples": 82
+    }
+  },
+  "friend 2": {
+    "v3": {
+      "accuracy": 0.6951219512195121,
+      "macro_f1": 0.6653375536542506,
+      "n_samples": 82
+    },
+    "v4": {
+      "accuracy": 0.7073170731707317,
+      "macro_f1": 0.6350637729108978,
+      "per_class_recall": {
+        "Safe driving": 1.0,
+        "Texting - right": 0.6,
+        "Talking on phone - right": 0.3,
+        "Texting - left": 0.8,
+        "Talking on phone - left": 0.9,
+        "Operating radio": 1.0,
+        "Drinking": 1.0,
+        "Reaching behind": 0.9,
+        "Hair/makeup": 0.0,
+        "Talking to passenger": 0.2
+      },
+      "n_samples": 82
+    }
+  },
+  "friend 3": {
+    "v3": {
+      "accuracy": 0.2736842105263158,
+      "macro_f1": 0.22158426216283872,
+      "n_samples": 190
+    },
+    "v4": {
+      "accuracy": 0.3263157894736842,
+      "macro_f1": 0.3229718234157733,
+      "per_class_recall": {
+        "Safe driving": 0.45,
+        "Texting - right": 0.25,
+        "Talking on phone - right": 0.05,
+        "Texting - left": 0.5294117647058824,
+        "Talking on phone - left": 0.35,
+        "Operating radio": 0.65,
+        "Drinking": 0.21428571428571427,
+        "Reaching behind": 0.25,
+        "Hair/makeup": 0.42105263157894735,
+        "Talking to passenger": 0.1
+      },
+      "n_samples": 190
+    }
+  },
+  "friend 4": {
+    "v3": {
+      "accuracy": 0.20918367346938777,
+      "macro_f1": 0.1720489639396962,
+      "n_samples": 196
+    },
+    "v4": {
+      "accuracy": 0.2857142857142857,
+      "macro_f1": 0.25183411640634634,
+      "per_class_recall": {
+        "Safe driving": 0.95,
+        "Texting - right": 0.0,
+        "Talking on phone - right": 0.05,
+        "Texting - left": 0.3,
+        "Talking on phone - left": 0.05,
+        "Operating radio": 0.65,
+        "Drinking": 0.4,
+        "Reaching behind": 0.0,
+        "Hair/makeup": 0.3,
+        "Talking to passenger": 0.1
+      },
+      "n_samples": 196
+    }
+  },
+  "me": {
+    "v3": {
+      "accuracy": 0.6609195402298851,
+      "macro_f1": 0.6390411541632146,
+      "n_samples": 522
+    },
+    "v4": {
+      "accuracy": 0.685823754789272,
+      "macro_f1": 0.6731016490242272,
+      "per_class_recall": {
+        "Safe driving": 1.0,
+        "Texting - right": 0.9166666666666666,
+        "Talking on phone - right": 0.7368421052631579,
+        "Texting - left": 0.7843137254901961,
+        "Talking on phone - left": 1.0,
+        "Operating radio": 1.0,
+        "Drinking": 0.45,
+        "Reaching behind": 0.2,
+        "Hair/makeup": 0.3829787234042553,
+        "Talking to passenger": 0.5106382978723404
+      },
+      "n_samples": 522
+    }
+  }
+}

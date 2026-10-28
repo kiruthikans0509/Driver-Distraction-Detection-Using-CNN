@@ -1,0 +1,833 @@
+===============================================================================
+DRIVER DISTRACTION CNN V5 - EXPERIMENT DESIGN PLAN (REVISED)
+===============================================================================
+
+Timestamp: 2026-10-15
+Project: C:\Users\kiruthikan S\Desktop\driver_monitoring
+
+===============================================================================
+1. CONFIRMED WEAKNESSES IN V4
+===============================================================================
+
+1.1 Person Imbalance in Training Data
+- Training set: 4,578 images
+- "me": 2,085 images (45.5% of training data)
+- friend 1: 430 images (9.4%)
+- friend 2: 432 images (9.4%)
+- friend 3: 834 images (18.2%)
+- friend 4: 797 images (17.4%)
+- "me" is 4.8x more represented than any other person
+- This leads to person-specific bias and poor generalization
+
+1.2 Catastrophic Performance on Specific People
+- Friend 3 validation: 32.63% accuracy (V4), 27.37% (V3)
+- Friend 4 validation: 28.57% accuracy (V4), 20.92% (V3)
+- These two represent 36% of validation set (386 of 1,072 images)
+- Both models fail catastrophically on these people
+
+1.3 Session Distribution Mismatch
+- session2: 164 validation images (friend 1, friend 2) - V4: 69.51%
+- session3_raw: 908 validation images (friend 3, friend 4, me) - V4: 52.42%
+- session3_raw is 34% brighter, 19% lower contrast than session2
+- Neither model generalizes to session3_raw-only data (Friend 5)
+
+1.4 Safe Driving Over-Prediction
+- V4 on Friend 5: 98.82% recall, 13.46% precision
+- V3 on Friend 5: 100% recall, 11.46% precision
+- Both models default to safe driving for unfamiliar samples
+- Suggests model lacks confidence for other classes
+
+1.5 Complete Failure on Specific Classes
+- Operating radio (c5): 0% recall on Friend 5 (both models)
+- Reaching behind (c7): 0% recall on Friend 5 (both models)
+- Hair/makeup (c8): 2-3% recall on Friend 5 (both models)
+- These classes are systematically difficult
+
+1.6 Limited Cross-Person Generalization
+- V4 on Friend 5: 27.91% accuracy
+- V3 on Friend 5: 24.51% accuracy
+- Both models fail catastrophically on unseen person
+- Session distribution is primary cause, but person imbalance exacerbates it
+
+===============================================================================
+2. PROPOSED CHANGES FOR V5
+===============================================================================
+
+2.1 Person- and Class-Balanced Sampling
+- Implement stratified sampling that balances both person and class
+- Target: Equal contribution per person AND balanced class distribution
+- Calculate joint person-class weights inversely proportional to frequency
+- Apply weights during training only (not validation)
+- Preserve all original images and temporal groups
+- No file duplication - use tf.data weighted sampling
+- Monitor effective sampling distribution per epoch
+
+2.2 Enhanced Augmentation for Session Variation
+- Add brightness augmentation: [-0.3, +0.3] to simulate session differences
+- Add contrast augmentation: [-0.3, +0.3] to simulate session differences
+- Keep existing moderate geometric augmentations: rotation (0.06), translation (0.08), zoom (0.10)
+- NO horizontal flips (preserves left/right distinction)
+- NO hue rotation (tested separately in Experiment C2)
+- Apply only to training data
+- Save visual samples of augmented images for inspection
+
+2.3 Conservative Training Strategy
+- Use V4 checkpoint as initialization (V4 performed better than V3)
+- Reduce Phase 1 learning rate to 5e-5 (from 1e-4)
+- Reduce Phase 2 learning rate to 5e-6 (from 1e-5)
+- Increase early stopping patience to 10 (from 8)
+- Add L2 regularization (1e-4) to classification head
+- Add dropout (0.5) before final layer
+
+2.4 Improved Checkpoint Selection
+- Select based on validation macro F1 (primary metric, not just accuracy)
+- Use early stopping on validation loss with patience
+- Monitor overfitting by tracking train/val gap
+- Save best Phase 1 and Phase 2 checkpoints separately
+
+===============================================================================
+3. PERSON- AND CLASS-BALANCED SAMPLING STRATEGY
+===============================================================================
+
+3.1 Current Training Distribution (Person x Class)
+Training set: 4,578 images
+
+"me" (2,085 images):
+- Class distribution varies by class (uneven across classes)
+- Highest frequency person, dominates training
+
+friend 1 (430 images):
+- Balanced across 10 classes (~43 per class)
+- Underrepresented in training
+
+friend 2 (432 images):
+- Balanced across 10 classes (~43 per class)
+- Underrepresented in training
+
+friend 3 (834 images):
+- Balanced across 10 classes (~83 per class)
+- Moderately represented
+
+friend 4 (797 images):
+- Balanced across 10 classes (~80 per class)
+- Moderately represented
+
+3.2 Target Sampling Distribution
+Goal: Equal contribution per person AND balanced class distribution
+
+Target per person: 20% of samples per epoch
+Target per class: 10% of samples per epoch
+Target per person-class: 2% of samples per epoch (20% person * 10% class)
+
+3.3 Weight Calculation
+For each person-class combination (p, c):
+- n(p,c) = number of training images for person p, class c
+- target_count = N_total / (n_persons * n_classes) = 4578 / (5 * 10) = 91.56
+- weight(p,c) = target_count / n(p,c)
+
+Example calculation:
+- If "me" has 200 images for class 0: weight = 91.56 / 200 = 0.46
+- If friend 1 has 43 images for class 0: weight = 91.56 / 43 = 2.13
+
+3.4 Implementation with tf.data
+- Create person-class weight dictionary from training manifest
+- Add "person" and "class_id" columns to training dataset (from manifest)
+- Use tf.data.sample_from_datasets with per-sample weights
+- Or use custom tf.data dataset with weighted shuffling
+- Apply weights during training only
+- Validation remains uniform (no weighting)
+
+3.5 Epoch Sampling Budget
+- Each epoch sees approximately 4578 samples (same as original)
+- Weighted sampling changes the frequency of each sample appearing
+- Each sample from underrepresented persons appears more frequently
+- Each sample from overrepresented persons appears less frequently
+- Effective per-epoch samples: ~4578 (no change in total seen per epoch)
+- Effective per-epoch unique persons: 5 (all persons seen every epoch)
+- Effective per-epoch unique classes: 10 (all classes seen every epoch)
+
+3.6 Preserving Temporal Groups
+- Temporal groups are defined within each person's recording
+- Weighted sampling operates at the image level, not group level
+- Within each person-class combination, temporal groups remain intact
+- Sampling affects how often each person-class batch appears, not group structure
+- No cross-group leakage (temporal groups already separated in manifests)
+
+3.7 Avoiding Class Overrepresentation
+- Weights are calculated per person-class combination
+- This ensures no single class is overrepresented when balancing people
+- Target is 2% per person-class combination (5 persons * 10 classes = 50 combinations)
+- Weighted sampling converges to balanced distribution over multiple epochs
+
+3.8 No File Duplication
+- No image files are copied or modified
+- Weighted sampling is achieved through tf.data operations
+- Original dataset remains unchanged
+- V4 manifests remain fixed
+
+===============================================================================
+4. AUGMENTATION STRATEGY
+===============================================================================
+
+4.1 Existing V4 Augmentations (Preserved in All Experiments)
+- RandomRotation: 0.06 (approx 3.4 degrees)
+- RandomTranslation: 0.08 (8% of image width/height)
+- RandomZoom: 0.10 (10% zoom in/out)
+- RandomBrightness: 0.15 (15% brightness variation)
+- RandomContrast: 0.15 (15% contrast variation)
+
+4.2 Proposed New Augmentations
+Experiment C: Enhanced brightness/contrast augmentation only
+- RandomBrightness: Increased to 0.30 (30% variation)
+- RandomContrast: Increased to 0.30 (30% variation)
+- NO hue rotation (tested separately if needed)
+
+4.3 Rationale
+- session3_raw is 34% brighter than session2
+- session3_raw has 19% lower contrast than session2
+- Increased brightness/contrast augmentation simulates these variations
+- Hue rotation is NOT included in initial experiments (separate test if needed)
+- NO horizontal flips (preserves left/right distinction)
+
+4.4 Application Order
+- Augmentation happens BEFORE MobileNetV2 preprocess_input
+- Order: Load image → Decode → Resize → Augment → preprocess_input
+- This ensures augmentation operates on [0, 255] pixel values
+- preprocess_input then scales to [-1, 1] for MobileNetV2
+
+4.5 Visual Sample Inspection
+- Save 16 sample augmented images (2 per class) for inspection
+- Show original vs augmented side-by-side
+- Verify augmentation is not too aggressive
+- Verify augmentation preserves action visibility
+- Save to: models/distraction_v5_augmentation_samples.png
+
+4.6 Training/Validation/Test Split
+- Augmentation only applied to training data
+- Validation data has NO augmentation
+- Test data has NO augmentation
+- Augmentation applied via tf.keras.Sequential layer in training pipeline
+
+===============================================================================
+5. CONTROLLED EXPERIMENTS
+===============================================================================
+
+5.1 Experiment A: Baseline (V4 Strategy Replicated)
+Purpose: Replicate V4 to establish baseline for comparison
+
+Configuration:
+- Initialization: V4 checkpoint (models/distraction_cnn_webcam_v4_best.keras)
+- Sampling: Uniform (no person or class balancing)
+- Augmentation: V4 augmentations only (brightness 0.15, contrast 0.15)
+- Learning rates: Phase 1: 1e-4, Phase 2: 1e-5
+- Regularization: None
+- Checkpoint selection: Validation accuracy (V4's original metric)
+- Epochs: Phase 1: 15 max, Phase 2: 15 max
+- Early stopping: patience 8 (V4's original setting)
+
+Differences from V4: None (direct replication)
+Expected: Should achieve ~55% validation accuracy if replication is correct
+
+5.2 Experiment B: Person- and Class-Balanced Sampling Only
+Purpose: Test effect of sampling strategy alone
+
+Configuration:
+- Initialization: V4 checkpoint
+- Sampling: Person-class weighted (equal weight per person-class)
+- Augmentation: V4 augmentations only (brightness 0.15, contrast 0.15)
+- Learning rates: Phase 1: 1e-4, Phase 2: 1e-5
+- Regularization: None
+- Checkpoint selection: Validation macro F1 (new primary metric)
+- Epochs: Phase 1: 15 max, Phase 2: 15 max
+- Early stopping: patience 10 (slightly more conservative)
+
+Differences from V4:
+- Person-class weighted sampling
+- Macro F1-based checkpoint selection
+- Increased early stopping patience
+
+Expected: Should improve friend 3 and friend 4 performance
+
+5.3 Experiment C: Enhanced Brightness/Contrast Augmentation Only
+Purpose: Test effect of session-aware augmentation alone
+
+Configuration:
+- Initialization: V4 checkpoint
+- Sampling: Uniform (no person or class balancing)
+- Augmentation: Enhanced brightness (0.30) and contrast (0.30)
+- Learning rates: Phase 1: 1e-4, Phase 2: 1e-5
+- Regularization: None
+- Checkpoint selection: Validation macro F1
+- Epochs: Phase 1: 15 max, Phase 2: 15 max
+- Early stopping: patience 10
+
+Differences from V4:
+- Enhanced brightness/contrast augmentation
+- Macro F1-based checkpoint selection
+- Increased early stopping patience
+
+Expected: Should improve session3_raw generalization
+
+5.4 Experiment D: Combined Sampling and Augmentation (Recommended)
+Purpose: Test combined improvements
+
+Configuration:
+- Initialization: V4 checkpoint
+- Sampling: Person-class weighted (equal weight per person-class)
+- Augmentation: Enhanced brightness (0.30) and contrast (0.30)
+- Learning rates: Phase 1: 5e-5, Phase 2: 5e-6 (conservative)
+- Regularization: L2 (1e-4) on classification head, Dropout (0.5)
+- Checkpoint selection: Validation macro F1
+- Epochs: Phase 1: 15 max, Phase 2: 15 max
+- Early stopping: patience 10
+
+Differences from V4:
+- Person-class weighted sampling
+- Enhanced brightness/contrast augmentation
+- Lower learning rates
+- L2 regularization + Dropout
+- Macro F1-based checkpoint selection
+
+Expected: Should show best improvement if changes are synergistic
+
+5.5 Experiment Order
+RECOMMENDED ORDER: D → B → C → A
+- Run D first (combined approach) to test if improvements are possible
+- If D shows improvement, run B and C to isolate contributions
+- Run A last to establish baseline (if D doesn't work, may not need A)
+
+ALTERNATIVE ORDER: A → B → C → D
+- Run A first to establish baseline
+- Run B, C, D to test individual improvements
+- More systematic but slower
+
+5.6 Initialization Consistency
+All experiments use V4 checkpoint as initialization:
+- Ensures fair comparison
+- V4 performed better than V3 on validation (55.04% vs 50.93%)
+- V4 performed better than V3 on Friend 5 (27.91% vs 24.51%)
+
+5.7 Fixed Components Across All Experiments
+- Train/validation manifests: data/v4_splits/train.csv, validation.csv
+- Evaluation preprocessing: MobileNetV2 preprocess_input
+- Evaluation metrics: accuracy, macro F1, per-class, per-person
+- Image size: 224x224
+- Batch size: 16
+- Architecture: MobileNetV2 (same as V4)
+- Two-phase training: frozen backbone → unfrozen last 25%
+
+===============================================================================
+6. EVALUATION PROTOCOL
+===============================================================================
+
+6.1 Primary Metric
+- Validation macro F1 (primary selection metric)
+- Rationale: Balances precision and recall across all classes
+- More robust than accuracy for imbalanced datasets
+
+6.2 Secondary Metrics
+- Validation accuracy
+- Validation macro precision
+- Validation macro recall
+- Validation weighted F1
+
+6.3 Per-Class Metrics
+- Per-class precision, recall, F1 for all 10 classes
+- Special attention to:
+  * Safe driving (c0) - monitor over-prediction (precision vs recall)
+  * Operating radio (c5) - monitor for improvement from 0% recall
+  * Reaching behind (c7) - monitor for improvement from 0% recall
+  * Hair/makeup (c8) - monitor for improvement from 2-3% recall
+  * Talking to passenger (c9) - monitor for improvement from 18-20% recall
+
+6.4 Per-Person Metrics
+- Per-person accuracy on validation set
+- Per-person macro F1 on validation set
+- Special attention to:
+  * friend 3 - currently 32.63% (target: >50%)
+  * friend 4 - currently 28.57% (target: >50%)
+  * friend 1 - currently 68.29% (monitor for regression)
+  * friend 2 - currently 70.73% (monitor for regression)
+  * "me" - currently 68.58% (monitor for regression)
+
+6.5 Safe Driving Behavior Analysis
+- False positives: Non-safe samples predicted as safe
+- False negatives: Safe samples predicted as non-safe
+- Calculate from confusion matrix:
+  * FP = confusion_matrix[safe_row][non-safe_cols].sum()
+  * FN = confusion_matrix[non-safe_rows][safe_col].sum()
+- Monitor FP/FN trade-off across experiments
+
+6.6 Checkpoint Selection
+- Select checkpoint based on validation macro F1 (not accuracy)
+- Use early stopping on validation loss with patience=10
+- Track train/val gap to detect overfitting
+- Save best Phase 1 and Phase 2 checkpoints separately
+- Choose best checkpoint across both phases
+
+6.7 Friend 5 Evaluation
+- Friend 5 has already been evaluated for V3 and V4
+- V3 on Friend 5: 24.51% accuracy, 21.58% macro F1
+- V4 on Friend 5: 27.91% accuracy, 26.10% macro F1
+- Treat existing Friend 5 results as diagnostic baselines
+- After V5 training, evaluate V5 on Friend 5 exactly once
+- Label V5 Friend 5 result as "previously examined holdout diagnostic"
+- Do not use Friend 5 for model selection or hyperparameter tuning
+- Do not tune thresholds based on Friend 5 results
+
+6.8 Independent Participant Reservation
+- Friend 5 is currently the held-out unseen person
+- For future experiments, consider:
+  * Hold out a different person (e.g., friend 1 or friend 2)
+  * Create a multi-person held-out set
+  * Use cross-validation across multiple people
+- For V5, Friend 5 remains the final unseen-person test
+
+===============================================================================
+7. SUCCESS CRITERIA
+===============================================================================
+
+7.1 Primary Success Criteria
+V5 will be considered successful if:
+- Validation macro F1 improves by >5% over V4 (54.99% -> >57.74%)
+- Friend 3 validation accuracy improves by >15% (32.63% -> >47.63%)
+- Friend 4 validation accuracy improves by >15% (28.57% -> >43.57%)
+- Friend 5 test accuracy improves by >10% (27.91% -> >37.91%)
+- Safe driving precision on Friend 5 improves to >20% (from 13.46%)
+- At least one of the failed classes shows improvement (c5 or c7 recall >10%)
+
+7.2 Moderate Success Criteria
+V5 will be considered moderately successful if:
+- Validation macro F1 improves by >2% over V4 (54.99% -> >56.09%)
+- Friend 3 or Friend 4 shows >10% improvement
+- Friend 5 shows >5% improvement
+- Safe driving precision improves on Friend 5
+
+7.3 Trade-off Handling
+If macro F1 improves but some participants/classes deteriorate substantially:
+- Check if deterioration is in already well-performing participants (e.g., "me", friend 2)
+- If deterioration is in already poor participants (friend 3, friend 4), reject
+- If deterioration is in specific classes (c5, c7), check if other classes improve
+- Accept trade-off if:
+  * Overall macro F1 improves by >5%
+  * Friend 3 and Friend 4 both improve
+  * Worst classes (c5, c7) show any improvement
+- Reject trade-off if:
+  * Friend 3 or Friend 4 deteriorate by >10%
+  * Worst classes (c5, c7) remain at 0% recall
+  * Safe driving over-prediction worsens
+
+7.4 Unsuccessful Criteria
+V5 will be considered unsuccessful if:
+- Validation macro F1 does not improve over V4
+- Friend 3 and Friend 4 show no improvement or deterioration
+- Friend 5 shows no improvement
+- Safe driving over-prediction worsens
+- Trade-offs are unacceptable per above criteria
+
+7.5 Experimental Success
+If Experiment D (combined approach) succeeds:
+- Run Experiments B and C to isolate which component contributed most
+- If person-balanced sampling is key, prioritize this in future models
+- If augmentation is key, prioritize this in future models
+- If both are needed, keep combined approach
+
+If Experiment D fails:
+- Analyze failure modes (which participants/classes failed?)
+- Consider stronger domain adaptation techniques
+- Consider session-specific training
+- Consider collecting more diverse data
+
+===============================================================================
+8. MODEL SAFETY
+===============================================================================
+
+8.1 Protected Files (DO NOT MODIFY)
+- models/distraction_cnn_webcam_v3_best.keras (V3 model)
+- models/distraction_cnn_webcam_v3.keras (V3 final)
+- models/distraction_cnn_webcam_v4_best.keras (V4 model)
+- models/distraction_cnn_webcam_v4.keras (V4 final)
+- models/distraction_v4_*.txt (V4 reports)
+- models/distraction_v4_*.json (V4 metrics)
+- models/distraction_v4_*.png (V4 plots)
+- src/test_facemesh.py (live inference script)
+- data/v4_splits/*.csv (V4 manifests)
+- data/webcam_distraction/ (original dataset)
+
+8.2 New V5 Artifact Paths (DO NOT OVERWRITE EXISTING)
+Models:
+- models/distraction_cnn_webcam_v5.keras (final model)
+- models/distraction_cnn_webcam_v5_best.keras (best checkpoint)
+- models/distraction_cnn_webcam_v5_p1_best.keras (Phase 1 best)
+- models/distraction_cnn_webcam_v5_p2_best.keras (Phase 2 best)
+
+Reports and Metrics:
+- models/distraction_v5_history.csv (training history)
+- models/distraction_v5_training.log (training log)
+- models/distraction_v5_report.txt (evaluation report)
+- models/distraction_v5_metrics.json (machine-readable metrics)
+- models/distraction_v5_augmentation_samples.png (augmentation visualization)
+
+Confusion Matrices:
+- models/distraction_cnn_webcam_v5_confusion.png (validation confusion)
+- models/distraction_cnn_webcam_v5_confusion_test.png (Friend 5 confusion)
+
+Analysis:
+- models/distraction_v5_person_class_analysis.json (per-person metrics)
+- models/distraction_v5_training_curves.png (training curves)
+- models/distraction_v5_sampling_distribution.txt (sampling analysis)
+
+Experiment Comparisons:
+- models/distraction_v5_experiment_summary.txt (A/B/C/D comparison)
+- models/distraction_v5_friend5_diagnostic.txt (Friend 5 diagnostic)
+
+===============================================================================
+9. PROPOSED TRAINING CONFIGURATION
+===============================================================================
+
+9.1 Dataset Configuration
+- Train manifest: data/v4_splits/train.csv (4,578 images)
+- Validation manifest: data/v4_splits/validation.csv (1,072 images)
+- Test manifest: data/v4_splits/test_unseen_person.csv (971 images)
+- Image size: 224x224
+- Batch size: 16
+- Seed: 42
+
+9.2 Preprocessing Pipeline
+- Load JPEG file
+- Decode to RGB (3 channels)
+- Resize to 224x224
+- Apply augmentation (training only)
+- Apply MobileNetV2 preprocess_input (scales to [-1, 1])
+- Order: Load → Decode → Resize → Augment → preprocess_input
+
+9.3 Augmentation Configuration (Experiment D)
+- RandomRotation: 0.06
+- RandomTranslation: 0.08, 0.08
+- RandomZoom: 0.10
+- RandomBrightness: 0.30 (enhanced from 0.15)
+- RandomContrast: 0.30 (enhanced from 0.15)
+- NO horizontal flips
+- NO hue rotation
+
+9.4 Sampling Configuration (Experiment D)
+- Person-class weighted sampling
+- Target: 2% per person-class combination (5 persons * 10 classes)
+- Weight calculation: weight(p,c) = 91.56 / n(p,c)
+- Applied via tf.data.sample_from_datasets
+- Validation: uniform sampling (no weights)
+
+9.5 Model Architecture
+- Base: MobileNetV2 (pretrained on ImageNet)
+- Input: (None, 224, 224, 3)
+- Output: (None, 10)
+- Global average pooling
+- Dense (256 units, ReLU)
+- Dropout (0.5)
+- Dense (10 units, Softmax)
+- L2 regularization: 1e-4 on classification head
+
+9.6 Training Configuration (Experiment D)
+Phase 1 (MobileNetV2 frozen):
+- Learning rate: 5e-5
+- Epochs: 15 max
+- Early stopping: patience 10, monitor val_loss
+- ReduceLROnPlateau: factor 0.5, patience 4, min_lr 1e-7
+- ModelCheckpoint: monitor val_macro_f1, save_best_only
+
+Phase 2 (Last 25% of MobileNetV2 unfrozen):
+- Learning rate: 5e-6
+- Epochs: 15 max
+- Early stopping: patience 10, monitor val_loss
+- ReduceLROnPlateau: factor 0.5, patience 4, min_lr 1e-7
+- ModelCheckpoint: monitor val_macro_f1, save_best_only
+
+9.7 Optimizer
+- Adam optimizer
+- Loss: sparse_categorical_crossentropy
+- Metrics: accuracy
+
+===============================================================================
+10. ESTIMATED CPU RUNTIME
+===============================================================================
+
+10.1 Training Time Estimates
+- V4 training time: 78.2 minutes (4,689 seconds)
+- V5 training time (Experiment D): Estimated 100-130 minutes
+- Reason: Enhanced augmentation adds computational overhead, weighted sampling adds minor overhead
+
+10.2 Epoch Estimates
+- Phase 1: 15 epochs maximum (early stopping likely ~10-12 epochs)
+- Phase 2: 15 epochs maximum (early stopping likely ~10-12 epochs)
+- Total: ~20-24 epochs expected
+- Early stopping patience: 10 epochs
+
+10.3 Step Time Estimates
+- Expected step time: 350-450ms per step (augmentation overhead)
+- Total batches per epoch: 4,578 / 16 = 286 batches
+- Epoch time: ~100-130 seconds
+- Training time: ~35-50 minutes per phase
+- Total training time: ~70-100 minutes
+
+10.4 Memory Considerations
+- 16 GB RAM is sufficient
+- Batch size: 16 (same as V4)
+- No caching of entire dataset in memory
+- tf.data streaming pipeline
+- Augmentation layer adds minimal memory overhead
+
+10.5 Evaluation Time Estimates
+- Validation evaluation: ~2-3 minutes
+- Friend 5 evaluation: ~2-3 minutes
+- Per-person analysis: ~5-10 minutes
+- Total evaluation time: ~10-15 minutes
+
+10.6 Total Experiment Time
+- Single experiment (D): ~80-115 minutes
+- All four experiments (A, B, C, D): ~5-7 hours (if run sequentially)
+- If only D is run: ~1.5-2 hours total (training + evaluation)
+
+===============================================================================
+11. ARTIFACT PATHS
+===============================================================================
+
+11.1 Training Script
+- src/train_distraction_cnn_v5.py
+  - Person-class weighted sampling implementation
+  - Enhanced augmentation layer
+  - Conservative training parameters
+  - Per-person evaluation metrics
+  - Per-class evaluation metrics
+  - Macro F1-based checkpoint selection
+  - Augmentation sample visualization
+
+11.2 Output Files (New V5-Specific Names)
+Models:
+- models/distraction_cnn_webcam_v5.keras
+- models/distraction_cnn_webcam_v5_best.keras
+- models/distraction_cnn_webcam_v5_p1_best.keras
+- models/distraction_cnn_webcam_v5_p2_best.keras
+
+Training:
+- models/distraction_v5_history.csv
+- models/distraction_v5_training.log
+- models/distraction_v5_training_curves.png
+- models/distraction_v5_augmentation_samples.png
+
+Evaluation:
+- models/distraction_v5_report.txt
+- models/distraction_v5_metrics.json
+- models/distraction_cnn_webcam_v5_confusion.png
+- models/distraction_cnn_webcam_v5_confusion_test.png
+- models/distraction_v5_person_class_analysis.json
+- models/distraction_v5_sampling_distribution.txt
+
+Experiments:
+- models/distraction_v5_experiment_A_report.txt
+- models/distraction_v5_experiment_B_report.txt
+- models/distraction_v5_experiment_C_report.txt
+- models/distraction_v5_experiment_D_report.txt
+- models/distraction_v5_experiment_summary.txt
+
+Friend 5 Diagnostic:
+- models/distraction_v5_friend5_diagnostic.txt
+- models/distraction_v5_friend5_diagnostic_metrics.json
+
+11.3 Protected Files (NOT MODIFIED)
+- models/distraction_cnn_webcam_v3_best.keras
+- models/distraction_cnn_webcam_v3.keras
+- models/distraction_cnn_webcam_v4_best.keras
+- models/distraction_cnn_webcam_v4.keras
+- models/distraction_v4_*.txt
+- models/distraction_v4_*.json
+- models/distraction_v4_*.png
+- src/test_facemesh.py
+- data/v4_splits/*.csv
+- data/webcam_distraction/
+
+===============================================================================
+12. EVALUATION PROCEDURE
+===============================================================================
+
+12.1 Training Phase
+1. Load V4 checkpoint as initialization
+2. Configure experiment (A, B, C, or D)
+3. Create training dataset with specified sampling and augmentation
+4. Create validation dataset (no sampling, no augmentation)
+5. Train Phase 1 (MobileNetV2 frozen)
+6. Train Phase 2 (last 25% unfrozen)
+7. Save best checkpoint based on validation macro F1
+8. Save training history and curves
+9. Save augmentation sample images
+
+12.2 Validation Evaluation Phase
+1. Load best V5 checkpoint
+2. Evaluate on validation set (1,072 images)
+3. Calculate accuracy, macro F1, precision, recall
+4. Calculate per-class metrics (precision, recall, F1)
+5. Calculate per-person metrics (accuracy, macro F1)
+6. Generate confusion matrix
+7. Analyze safe driving FP/FN behavior
+8. Save validation report and metrics
+
+12.3 Friend 5 Diagnostic Phase
+1. Load best V5 checkpoint
+2. Evaluate on Friend 5 test set (971 images)
+3. Calculate accuracy, macro F1, precision, recall
+4. Calculate per-class metrics
+5. Generate confusion matrix
+6. Compare with V3 and V4 Friend 5 results
+7. Label as "previously examined holdout diagnostic"
+8. Save diagnostic report
+
+12.4 Comparison Phase
+1. Compare V5 validation metrics with V4
+2. Compare V5 per-person metrics with V4
+3. Compare V5 per-class metrics with V4
+4. Compare V5 Friend 5 metrics with V3 and V4
+5. Generate experiment summary report
+6. Identify which components contributed to improvement
+
+===============================================================================
+13. RISKS AND LIMITATIONS
+===============================================================================
+
+13.1 Dataset Limitations
+- Only 6 people total - insufficient for robust generalization
+- Friend 5 is the only held-out person - limited evaluation
+- Session distribution mismatch is fundamental - may not be fully solvable
+- Class imbalance in some classes (especially on Friend 5)
+- Temporal groups may not perfectly separate all contexts
+
+13.2 Sampling Risks
+- Person-class balanced sampling may reduce overall accuracy on "me"
+- May not improve Friend 5 performance if session differences dominate
+- Weighted sampling may require more epochs to converge
+- Target distribution (2% per person-class) may not be optimal
+- Sampling may introduce noise if weights are calculated incorrectly
+
+13.3 Augmentation Risks
+- Excessive augmentation may degrade model performance
+- Brightness/contrast augmentation may not fully capture session differences
+- Augmentation may remove important visual cues for certain classes
+- Visual inspection needed to verify augmentation quality
+- May need to tune augmentation parameters
+
+13.4 Generalization Risks
+- May not achieve >50% accuracy on Friend 5
+- May still fail on Operating radio and Reaching behind
+- May still over-predict safe driving on unseen data
+- Session distribution mismatch may be fundamental barrier
+- Person-specific features may still dominate learned features
+
+13.5 CPU-Only Training
+- Slower training than GPU
+- Limits ability to run many experiments
+- May restrict hyperparameter tuning
+- Longer experiment cycle time
+
+13.6 Experiment Control Risks
+- Different checkpoint selection (macro F1 vs accuracy) may confound comparison
+- Different early stopping patience may affect convergence
+- Different learning rates may affect performance
+- Need to isolate effects of each change carefully
+
+===============================================================================
+14. IMPLEMENTATION PRIORITY
+===============================================================================
+
+14.1 Recommended Sequence
+OPTION 1 (Fastest): Run D only
+- Implement Experiment D (combined approach)
+- Train and evaluate
+- If successful, analyze results
+- If unsuccessful, analyze failure modes
+- Estimated time: 1.5-2 hours
+
+OPTION 2 (Systematic): Run A → B → C → D
+- Run Experiment A (baseline)
+- Run Experiment B (sampling only)
+- Run Experiment C (augmentation only)
+- Run Experiment D (combined)
+- Compare all results
+- Isolate contributing factors
+- Estimated time: 5-7 hours
+
+OPTION 3 (Adaptive): Run D → (B and C if D works)
+- Run Experiment D first
+- If D shows improvement, run B and C to isolate effects
+- If D shows no improvement, skip B and C
+- Analyze failure modes
+- Estimated time: 2-4 hours
+
+RECOMMENDATION: OPTION 3 (Adaptive)
+- Test if improvements are possible with D first
+- If D works, isolate contributions with B and C
+- If D fails, save time and analyze why
+
+14.2 Implementation Steps
+1. Implement src/train_distraction_cnn_v5.py with all experiment configurations
+2. Add experiment selection flag (--experiment A/B/C/D)
+3. Implement person-class weighted sampling
+4. Implement enhanced augmentation
+5. Implement macro F1-based checkpoint selection
+6. Add augmentation sample visualization
+7. Add per-person and per-class evaluation
+8. Run selected experiment(s)
+9. Generate evaluation reports
+10. Compare results and generate summary
+
+===============================================================================
+15. SUCCESS CRITERIA SUMMARY
+===============================================================================
+
+15.1 Primary Success (All Required)
+- Validation macro F1 >57.74% (+5% over V4)
+- Friend 3 accuracy >47.63% (+15% over V4)
+- Friend 4 accuracy >43.57% (+15% over V4)
+- Friend 5 accuracy >37.91% (+10% over V4)
+- Safe driving precision on Friend 5 >20%
+- At least one of c5 or c7 recall >10%
+
+15.2 Moderate Success (At Least One Required)
+- Validation macro F1 >56.09% (+2% over V4)
+- Friend 3 or Friend 4 >42.63% (+10% over V4)
+- Friend 5 >32.70% (+5% over V4)
+- Safe driving precision improves on Friend 5
+
+15.3 Unsuccessful (Any)
+- Validation macro F1 ≤54.99% (no improvement)
+- Friend 3 or Friend 4 deteriorates by >10%
+- Friend 5 ≤27.91% (no improvement)
+- Safe driving over-prediction worsens
+- Worst classes remain at 0% recall
+
+15.4 Trade-off Acceptance
+Accept trade-off if:
+- Overall macro F1 improves by >5%
+- Friend 3 and Friend 4 both improve
+- Worst classes (c5, c7) show any improvement
+- Deterioration is only in already well-performing participants
+
+Reject trade-off if:
+- Friend 3 or Friend 4 deteriorates by >10%
+- Worst classes (c5, c7) remain at 0% recall
+- Safe driving over-prediction worsens
+
+===============================================================================
+16. NEXT STEPS AFTER APPROVAL
+===============================================================================
+
+1. Implement src/train_distraction_cnn_v5.py with experiment configuration
+2. Test script syntax and data loading
+3. Run selected experiment(s) (start with D)
+4. Monitor training progress (estimated 70-100 minutes)
+5. Evaluate on validation set with detailed metrics
+6. Generate augmentation sample images for inspection
+7. Compare V5 with V4 performance
+8. If V5 shows improvement, evaluate on Friend 5 once
+9. Generate final comparison report
+10. If V5 is successful, consider separate live-testing approval
+11. If V5 is unsuccessful, analyze failure modes and consider alternatives
+
+===============================================================================

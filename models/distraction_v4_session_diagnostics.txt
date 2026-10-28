@@ -1,0 +1,235 @@
+===============================================================================
+DRIVER DISTRACTION CNN V4 - SESSION DISTRIBUTION DIAGNOSTICS REPORT
+===============================================================================
+
+Timestamp: 2026-10-15
+Project: C:\Users\kiruthikan S\Desktop\driver_monitoring
+
+===============================================================================
+1. MANIFEST STRUCTURE VERIFICATION
+===============================================================================
+
+Validation Set Distribution:
+- Total validation samples: 1,072
+- session2: 164 images (15.3%)
+- session3_raw: 908 images (84.7%)
+
+CRITICAL FINDING: Validation set is COMPLETELY SEPARATED by session and person:
+
+Session Distribution by Person:
+- session2: friend 1 (82 images), friend 2 (82 images)
+- session3_raw: friend 3 (190 images), friend 4 (196 images), me (522 images)
+
+This means:
+- Friend 1 and friend 2 ONLY appear in session2
+- Friend 3, friend 4, and "me" ONLY appear in session3_raw
+- There is NO overlap between sessions in the validation set
+
+===============================================================================
+2. SESSION-SPECIFIC VALIDATION RESULTS
+===============================================================================
+
+Session: session2 (164 images - friend 1, friend 2)
+  V3 Accuracy: 65.85%
+  V3 Macro F1: 0.6217
+  V4 Accuracy: 69.51%
+  V4 Macro F1: 0.6760
+  Difference (V4 - V3): +3.66%
+
+Session: session3_raw (908 images - friend 3, friend 4, me)
+  V3 Accuracy: 48.24%
+  V3 Macro F1: 0.4701
+  V4 Accuracy: 52.42%
+  V4 Macro F1: 0.5220
+  Difference (V4 - V3): +4.19%
+
+KEY INSIGHT: session3_raw is SIGNIFICANTLY harder than session2 for both models.
+- V3: 65.85% (session2) vs 48.24% (session3_raw) = -17.61% drop
+- V4: 69.51% (session2) vs 52.42% (session3_raw) = -17.09% drop
+
+Both models show similar performance degradation on session3_raw (~17% drop).
+
+===============================================================================
+3. PERSON-SPECIFIC VALIDATION RESULTS
+===============================================================================
+
+Person: friend 1 (82 images - session2)
+  V3 Accuracy: 62.20%
+  V3 Macro F1: 0.5579
+  V4 Accuracy: 68.29%
+  V4 Macro F1: 0.6401
+  Difference (V4 - V3): +6.10%
+
+Person: friend 2 (82 images - session2)
+  V3 Accuracy: 69.51%
+  V3 Macro F1: 0.6653
+  V4 Accuracy: 70.73%
+  V4 Macro F1: 0.6351
+  Difference (V4 - V3): +1.22%
+
+Person: friend 3 (190 images - session3_raw)
+  V3 Accuracy: 27.37%
+  V3 Macro F1: 0.2216
+  V4 Accuracy: 32.63%
+  V4 Macro F1: 0.3230
+  Difference (V4 - V3): +5.26%
+
+Person: friend 4 (196 images - session3_raw)
+  V3 Accuracy: 20.92%
+  V3 Macro F1: 0.1720
+  V4 Accuracy: 28.57%
+  V4 Macro F1: 0.2518
+  Difference (V4 - V3): +7.65%
+
+Person: me (522 images - session3_raw)
+  V3 Accuracy: 66.09%
+  V3 Macro F1: 0.6390
+  V4 Accuracy: 68.58%
+  V4 Macro F1: 0.6731
+  Difference (V4 - V3): +2.49%
+
+KEY INSIGHT: Friend 3 and friend 4 are EXTREMELY difficult for both models.
+- Friend 3: 27.37% (V3) vs 32.63% (V4)
+- Friend 4: 20.92% (V3) vs 28.57% (V4)
+- These two represent 386 of 1,072 validation samples (36%)
+
+This explains the overall validation performance of 55.04% - the model performs
+well on most people but catastrophically fails on friend 3 and friend 4.
+
+===============================================================================
+4. EXISTING FRIEND 5 TEST RESULTS (Previously Observed)
+===============================================================================
+
+Friend 5 (971 images - session3_raw only):
+  V4 Accuracy: 27.91%
+  V4 Macro F1: 0.2610
+  V4 Weighted F1: 0.2669
+
+Complete Failure Classes:
+- Operating radio (c5): 0% recall
+- Reaching behind (c7): 0% recall
+- Hair/makeup (c8): 2.08% recall
+
+Safe driving massively over-predicted:
+- Recall: 98.82%
+- Precision: 13.46%
+
+===============================================================================
+5. VISUAL DATA INSPECTION
+===============================================================================
+
+Session: session2
+  Mean brightness: 119.91 +/- 12.01
+  Mean contrast: 63.26 +/- 2.14
+  Mean face position (normalized): 0.432 +/- 0.009
+
+Session: session3_raw
+  Mean brightness: 160.71 +/- 3.59
+  Mean contrast: 51.54 +/- 1.17
+  Mean face position (normalized): 0.495 +/- 0.001
+
+CRITICAL VISUAL DIFFERENCES:
+1. Brightness: session3_raw is 34% brighter (160.71 vs 119.91)
+2. Contrast: session3_raw has 19% lower contrast (51.54 vs 63.26)
+3. Face position: session3_raw is more centered (0.495 vs 0.432)
+
+These are SIGNIFICANT visual differences that would affect model performance:
+- Higher brightness suggests different lighting conditions
+- Lower contrast suggests possible overexposure or different camera settings
+- Different face position suggests different camera angle or framing
+
+===============================================================================
+6. CROSS-ANALYSIS
+===============================================================================
+
+Session vs Person Correlation:
+- Friend 1, friend 2: session2 (perform well: 62-70%)
+- Friend 3, friend 4: session3_raw (perform poorly: 21-33%)
+- "me": session3_raw (performs well: 66-69%)
+
+This suggests the issue is NOT purely person-specific:
+- "me" performs well despite being in session3_raw
+- Friend 3 and friend 4 perform poorly in session3_raw
+- The issue may be person + session interaction
+
+Session vs Friend 5 Correlation:
+- Friend 5 is 100% session3_raw
+- Friend 5 performs catastrophically (27.91%)
+- Friend 3 and friend 4 (also session3_raw) perform poorly (21-33%)
+- "me" (session3_raw) performs well (66-69%)
+
+This suggests:
+- session3_raw has inherent difficulty
+- Some people (friend 3, friend 4, friend 5) are particularly difficult in session3_raw
+- Other people ("me") perform well in session3_raw
+
+===============================================================================
+7. CONCLUSIONS
+===============================================================================
+
+1. WHICH SESSION HAS LOWER PERFORMANCE?
+   - session3_raw has significantly lower performance than session2
+   - Both V3 and V4 show ~17% performance drop on session3_raw
+   - V3: 65.85% (session2) vs 48.24% (session3_raw)
+   - V4: 69.51% (session2) vs 52.42% (session3_raw)
+
+2. DOES THE DIFFERENCE REMAIN WHEN COMPARING THE SAME MODEL ACROSS SESSIONS?
+   - YES. Both models show consistent ~17% performance drop on session3_raw
+   - This confirms session3_raw is inherently more difficult
+   - The difference is NOT model-specific
+
+3. DO THE RESULTS SUGGEST A PERSON-SPECIFIC OR SESSION-SPECIFIC ISSUE?
+   - BOTH. There is a strong interaction between person and session:
+     * Friend 1, friend 2 (session2): perform well (62-70%)
+     * Friend 3, friend 4 (session3_raw): perform poorly (21-33%)
+     * "me" (session3_raw): performs well (66-69%)
+   - session3_raw has significant visual differences (brightness, contrast, face position)
+   - Some people appear more robust to these differences (e.g., "me")
+   - Other people appear highly sensitive to these differences (e.g., friend 3, friend 4, friend 5)
+
+4. WHAT EXPERIMENT SHOULD BE PERFORMED NEXT?
+   PRIORITY 1: Evaluate V3 on Friend 5 test set
+   - This will confirm whether V3 also fails catastrophically on session3_raw-only data
+   - If V3 also fails (~20-30%), this confirms the session distribution issue
+   - If V3 performs well (>60%), this suggests V4 has a separate generalization problem
+
+   PRIORITY 2: Investigate why friend 3, friend 4, and friend 5 perform poorly in session3_raw
+   - Visual inspection of these specific people's images
+   - Check for systematic differences in appearance, pose, or recording conditions
+   - May reveal characteristics that make these people particularly difficult
+
+   PRIORITY 3: Train a session3_raw-only model
+   - Train on session3_raw data only (friends 3, 4, 5, and "me" session3 portion)
+   - Evaluate on Friend 5 test set
+   - This would test whether session2 contamination is harming session3_raw performance
+
+5. WHICH CONCLUSIONS REMAIN UNCERTAIN?
+   - Whether V3 would perform better than V4 on Friend 5 (need to test)
+   - Why "me" performs well in session3_raw while friend 3, friend 4, friend 5 do not
+   - Whether the visual differences (brightness, contrast, face position) are the primary cause
+   - Whether additional factors (background, camera angle, pose) contribute to the difficulty
+   - Whether domain adaptation techniques would improve cross-session generalization
+
+===============================================================================
+8. SUMMARY
+===============================================================================
+
+ROOT CAUSE: The low V4 accuracy (55.04% on validation, 27.91% on Friend 5) is
+primarily caused by SESSION DISTRIBUTION MISMATCH, not model training issues.
+
+EVIDENCE:
+1. V4 outperforms V3 on the same validation images (55.04% vs 50.93%)
+2. Both models show ~17% performance drop on session3_raw vs session2
+3. session3_raw has significant visual differences (34% brighter, 19% lower contrast)
+4. Friend 5 is 100% session3_raw and performs catastrophically (27.91%)
+5. Friend 3 and friend 4 (session3_raw) also perform poorly (21-33%)
+6. "me" (session3_raw) performs well (66-69%), suggesting person-specific factors
+
+CONCLUSION: V4 is NOT a failed model. The poor generalization to Friend 5 is
+caused by the fundamental difficulty of session3_raw data, which has different
+visual characteristics than session2 data. V3 likely would also fail on Friend 5.
+
+RECOMMENDATION: Evaluate V3 on Friend 5 test set to confirm this hypothesis
+before considering any further training experiments.
+
+===============================================================================

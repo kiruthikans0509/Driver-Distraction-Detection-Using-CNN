@@ -1,0 +1,127 @@
+======================================================================
+DRIVER DISTRACTION CNN V4 -- EVALUATION REPORT
+======================================================================
+
+Timestamp: 2026-10-15 22:02:54
+Starting Model: C:\Users\kiruthikan S\Desktop\driver_monitoring\models\distraction_cnn_webcam_v3_best.keras
+Output Model: C:\Users\kiruthikan S\Desktop\driver_monitoring\models\distraction_cnn_webcam_v4.keras
+Best Model: C:\Users\kiruthikan S\Desktop\driver_monitoring\models\distraction_cnn_webcam_v4_best.keras
+Confusion Plot: C:\Users\kiruthikan S\Desktop\driver_monitoring\models\distraction_cnn_webcam_v4_confusion.png
+
+--- 1. DATASET SUMMARY ---
+Train samples: 4578
+Validation samples: 1072
+Test samples (unseen person): 971
+Train persons: {'friend 1', 'friend 3', 'friend 4', 'me', 'friend 2'}
+Validation persons: {'friend 1', 'friend 3', 'friend 4', 'me', 'friend 2'}
+Test persons: {'friend 5'}
+Batch size: 16
+Seed: 42
+
+--- 2. TRAINING HISTORY ---
+Phase 1 epochs completed: 13
+Phase 1 duration: 3297.2 seconds
+Phase 1 best val accuracy: 0.5168
+Phase 2 epochs completed: 15
+Phase 2 duration: 1391.1 seconds
+Phase 2 best val accuracy: 0.5504
+Total training time: 4689.0 seconds
+
+--- 3. VALIDATION RESULTS ---
+Validation Accuracy: 0.5504 (55.04%)
+Validation Macro Precision: 0.6332
+Validation Macro Recall: 0.5559
+Validation Macro F1: 0.5499
+Validation Weighted F1: 0.5518
+
+Classification Report:
+                          precision    recall  f1-score   support
+
+            Safe driving     0.2857    0.8667    0.4298        90
+         Texting - right     0.6574    0.6121    0.6339       116
+Talking on phone - right     0.7619    0.4444    0.5614       108
+          Texting - left     0.7849    0.6759    0.7264       108
+ Talking on phone - left     0.7895    0.6818    0.7317       110
+         Operating radio     0.4700    0.8545    0.6065       110
+                Drinking     0.8654    0.4245    0.5696       106
+         Reaching behind     0.6304    0.2417    0.3494       120
+             Hair/makeup     0.5200    0.4021    0.4535        97
+    Talking to passenger     0.5672    0.3551    0.4368       107
+
+                accuracy                         0.5504      1072
+               macro avg     0.6332    0.5559    0.5499      1072
+            weighted avg     0.6400    0.5504    0.5518      1072
+
+Confusion Matrix:
+[[78  0  0  0  0  3  0  2  0  7]
+ [19 71  5 16  0  1  0  2  2  0]
+ [33  3 48  0  9  6  1  0  8  0]
+ [ 5 18  5 73  2  2  0  3  0  0]
+ [19  0  0  1 75  2  2  1  6  4]
+ [ 2  7  0  0  0 94  0  5  0  2]
+ [ 9  2  1  0  4 16 45  1 20  8]
+ [24  1  0  0  0 62  0 29  0  4]
+ [28  6  3  3  2  7  4  1 39  4]
+ [56  0  1  0  3  7  0  2  0 38]]
+
+--- 4. UNSEEN-PERSON TEST RESULTS (Friend 5) ---
+Test Accuracy: 0.2791 (27.91%)
+Test Macro Precision: 0.4165
+Test Macro Recall: 0.2842
+Test Macro F1: 0.2610
+Test Weighted F1: 0.2669
+
+Classification Report:
+                          precision    recall  f1-score   support
+
+            Safe driving     0.1346    0.9882    0.2370        85
+         Texting - right     0.8140    0.6542    0.7254       107
+Talking on phone - right     1.0000    0.1900    0.3193       100
+          Texting - left     0.4314    0.2075    0.2803       106
+ Talking on phone - left     0.5085    0.3226    0.3947        93
+         Operating radio     0.0000    0.0000    0.0000        97
+                Drinking     0.9310    0.2755    0.4252        98
+         Reaching behind     0.0000    0.0000    0.0000        96
+             Hair/makeup     0.1429    0.0208    0.0364        96
+    Talking to passenger     0.2024    0.1828    0.1921        93
+
+                accuracy                         0.2791       971
+               macro avg     0.4165    0.2842    0.2610       971
+            weighted avg     0.4277    0.2791    0.2669       971
+
+Confusion Matrix:
+[[84  0  0  0  0  0  0  0  0  1]
+ [29 70  0  7  0  0  0  0  0  1]
+ [52  1 19  0 23  0  0  0  4  1]
+ [70 14  0 22  0  0  0  0  0  0]
+ [16  0  0 10 30  0  0  0  0 37]
+ [82  0  0  2  0  0  0  0  0 13]
+ [62  0  0  0  2  0 27  0  7  0]
+ [93  0  0  0  0  0  0  0  0  3]
+ [66  0  0 10  4  0  2  1  2 11]
+ [70  1  0  0  0  0  0  4  1 17]]
+
+--- 5. PER-CLASS METRICS (Validation) ---
+  Safe driving (c0): precision=0.2857, recall=0.8667, f1=0.4298
+  Texting - right (c1): precision=0.6574, recall=0.6121, f1=0.6339
+  Talking on phone - right (c2): precision=0.7619, recall=0.4444, f1=0.5614
+  Texting - left (c3): precision=0.7849, recall=0.6759, f1=0.7264
+  Talking on phone - left (c4): precision=0.7895, recall=0.6818, f1=0.7317
+  Operating radio (c5): precision=0.4700, recall=0.8545, f1=0.6065
+  Drinking (c6): precision=0.8654, recall=0.4245, f1=0.5696
+  Reaching behind (c7): precision=0.6304, recall=0.2417, f1=0.3494
+  Hair/makeup (c8): precision=0.5200, recall=0.4021, f1=0.4535
+  Talking to passenger (c9): precision=0.5672, recall=0.3551, f1=0.4368
+
+--- 6. PER-CLASS METRICS (Test) ---
+  Safe driving (c0): precision=0.1346, recall=0.9882, f1=0.2370
+  Texting - right (c1): precision=0.8140, recall=0.6542, f1=0.7254
+  Talking on phone - right (c2): precision=1.0000, recall=0.1900, f1=0.3193
+  Texting - left (c3): precision=0.4314, recall=0.2075, f1=0.2803
+  Talking on phone - left (c4): precision=0.5085, recall=0.3226, f1=0.3947
+  Operating radio (c5): precision=0.0000, recall=0.0000, f1=0.0000
+  Drinking (c6): precision=0.9310, recall=0.2755, f1=0.4252
+  Reaching behind (c7): precision=0.0000, recall=0.0000, f1=0.0000
+  Hair/makeup (c8): precision=0.1429, recall=0.0208, f1=0.0364
+  Talking to passenger (c9): precision=0.2024, recall=0.1828, f1=0.1921
+

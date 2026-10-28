@@ -1,0 +1,31 @@
+{
+  "train_samples": 4578,
+  "val_samples": 1072,
+  "test_samples": 971,
+  "person_class_combinations": 50,
+  "epoch_budget": 4578,
+  "target_per_combination": 91.56,
+  "sampling_results": [
+    {
+      "epoch": 1,
+      "total_samples": 4600,
+      "person_counts": {
+        "friend 1": 920,
+        "friend 2": 920,
+        "friend 3": 920,
+        "friend 4": 920,
+        "me": 920
+      },
+      "class_counts": {
+        "0": 460,
+        "1": 460,
+        "2": 460,
+        "3": 460,
+        "4": 460,
+        "5": 460,
+        "6": 460,
+        "7": 460,
+        "8": 460,
+        "9": 460
+      },
+      "person_class_counts": {

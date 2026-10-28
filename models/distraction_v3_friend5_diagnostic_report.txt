@@ -1,0 +1,44 @@
+======================================================================
+V3 EVALUATION ON FRIEND 5 TEST SET - DIAGNOSTIC REPORT
+======================================================================
+
+Model: C:\Users\kiruthikan S\Desktop\driver_monitoring\models\distraction_cnn_webcam_v3_best.keras
+Test CSV: C:\Users\kiruthikan S\Desktop\driver_monitoring\data\v4_splits\test_unseen_person.csv
+Test Samples: 971
+
+Accuracy: 0.2451 (24.51%)
+Macro Precision: 0.4639
+Macro Recall: 0.2480
+Macro F1: 0.2158
+Weighted F1: 0.2238
+
+Classification Report:
+                          precision    recall  f1-score   support
+
+            Safe driving     0.1146    1.0000    0.2056        85
+         Texting - right     0.7900    0.7383    0.7633       107
+Talking on phone - right     1.0000    0.1600    0.2759       100
+          Texting - left     0.4902    0.2358    0.3185       106
+ Talking on phone - left     0.5882    0.1075    0.1818        93
+         Operating radio     0.0000    0.0000    0.0000        97
+                Drinking     1.0000    0.1633    0.2807        98
+         Reaching behind     0.0000    0.0000    0.0000        96
+             Hair/makeup     0.1000    0.0208    0.0345        96
+    Talking to passenger     0.5556    0.0538    0.0980        93
+
+                accuracy                         0.2451       971
+               macro avg     0.4639    0.2480    0.2158       971
+            weighted avg     0.4739    0.2451    0.2238       971
+
+
+Confusion Matrix:
+ 85   0   0   0   0   0   0   0   0   0
+ 24  79   0   4   0   0   0   0   0   0
+ 65   4  16   0   6   0   0   0   9   0
+ 65  16   0  25   0   0   0   0   0   0
+ 72   0   0   8  10   0   0   0   0   3
+ 93   0   0   4   0   0   0   0   0   0
+ 73   0   0   0   1   0  16   0   8   0
+ 96   0   0   0   0   0   0   0   0   0
+ 84   0   0   9   0   0   0   0   2   1
+ 85   1   0   1   0   0   0   0   1   5

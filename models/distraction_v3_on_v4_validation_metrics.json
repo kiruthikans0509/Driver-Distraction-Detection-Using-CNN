@@ -1,0 +1,195 @@
+{
+  "model": "V3",
+  "model_path": "C:\\Users\\kiruthikan S\\Desktop\\driver_monitoring\\models\\distraction_cnn_webcam_v3_best.keras",
+  "validation_csv": "C:\\Users\\kiruthikan S\\Desktop\\driver_monitoring\\data\\v4_splits\\validation.csv",
+  "num_samples": 1072,
+  "accuracy": 0.5093283582089553,
+  "macro_precision": 0.5905782236548626,
+  "macro_recall": 0.5173619942675393,
+  "macro_f1": 0.4976208699125584,
+  "weighted_f1": 0.49698229754079565,
+  "per_class": {
+    "Safe driving": {
+      "precision": 0.2745762711864407,
+      "recall": 0.9,
+      "f1": 0.42077922077922075,
+      "support": 90
+    },
+    "Texting - right": {
+      "precision": 0.5573770491803278,
+      "recall": 0.5862068965517241,
+      "f1": 0.5714285714285714,
+      "support": 116
+    },
+    "Talking on phone - right": {
+      "precision": 0.6461538461538462,
+      "recall": 0.3888888888888889,
+      "f1": 0.48554913294797686,
+      "support": 108
+    },
+    "Texting - left": {
+      "precision": 0.6302521008403361,
+      "recall": 0.6944444444444444,
+      "f1": 0.6607929515418502,
+      "support": 108
+    },
+    "Talking on phone - left": {
+      "precision": 0.7,
+      "recall": 0.7,
+      "f1": 0.7,
+      "support": 110
+    },
+    "Operating radio": {
+      "precision": 0.4764705882352941,
+      "recall": 0.7363636363636363,
+      "f1": 0.5785714285714286,
+      "support": 110
+    },
+    "Drinking": {
+      "precision": 0.8809523809523809,
+      "recall": 0.3490566037735849,
+      "f1": 0.5,
+      "support": 106
+    },
+    "Reaching behind": {
+      "precision": 0.64,
+      "recall": 0.13333333333333333,
+      "f1": 0.2206896551724138,
+      "support": 120
+    },
+    "Hair/makeup": {
+      "precision": 0.6,
+      "recall": 0.4329896907216495,
+      "f1": 0.5029940119760479,
+      "support": 97
+    },
+    "Talking to passenger": {
+      "precision": 0.5,
+      "recall": 0.2523364485981308,
+      "f1": 0.33540372670807456,
+      "support": 107
+    }
+  },
+  "confusion_matrix": [
+    [
+      81,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0,
+      6
+    ],
+    [
+      17,
+      68,
+      5,
+      23,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0
+    ],
+    [
+      36,
+      3,
+      42,
+      0,
+      10,
+      1,
+      0,
+      1,
+      15,
+      0
+    ],
+    [
+      5,
+      20,
+      7,
+      75,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      18,
+      2,
+      1,
+      5,
+      77,
+      0,
+      1,
+      0,
+      6,
+      0
+    ],
+    [
+      5,
+      14,
+      1,
+      2,
+      1,
+      81,
+      0,
+      5,
+      0,
+      1
+    ],
+    [
+      10,
+      5,
+      6,
+      3,
+      12,
+      21,
+      37,
+      0,
+      6,
+      6
+    ],
+    [
+      30,
+      3,
+      0,
+      5,
+      0,
+      57,
+      0,
+      16,
+      1,
+      8
+    ],
+    [
+      25,
+      5,
+      3,
+      6,
+      6,
+      2,
+      1,
+      1,
+      42,
+      6
+    ],
+    [
+      68,
+      2,
+      0,
+      0,
+      4,
+      4,
+      0,
+      2,
+      0,
+      27
+    ]
+  ]
+}

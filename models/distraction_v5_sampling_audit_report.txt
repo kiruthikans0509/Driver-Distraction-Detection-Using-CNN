@@ -1,0 +1,118 @@
+======================================================================
+V5 SAMPLING AUDIT REPORT
+======================================================================
+
+Training samples: 4578
+Validation samples: 1072
+Test samples: 971
+
+Person-class combinations: 50
+Target samples per epoch: 4578
+Target per person-class combination: 91.56
+
+TWO-LEVEL SAMPLING STRATEGY:
+Level 1: Balance across persons and classes (50 combinations)
+Level 2: Distribute across temporal groups within each person-class
+
+SIMULATION RESULTS:
+
+Epoch 1:
+  Total samples: 4600
+  Unique persons: 5
+  Unique classes: 10
+  Unique person-class combinations: 50
+  Repeated images: 1185
+  Repeated groups: 60
+
+Epoch 2:
+  Total samples: 4600
+  Unique persons: 5
+  Unique classes: 10
+  Unique person-class combinations: 50
+  Repeated images: 1202
+  Repeated groups: 60
+
+Epoch 3:
+  Total samples: 4600
+  Unique persons: 5
+  Unique classes: 10
+  Unique person-class combinations: 50
+  Repeated images: 1220
+  Repeated groups: 60
+
+CONTAMINATION CHECK:
+  Validation contamination: False
+  Test contamination: False
+
+AVERAGE DISTRIBUTION (3 epochs):
+
+Per person-class:
+  friend 1, class 0: 92.0
+  friend 1, class 1: 92.0
+  friend 1, class 2: 92.0
+  friend 1, class 3: 92.0
+  friend 1, class 4: 92.0
+  friend 1, class 5: 92.0
+  friend 1, class 6: 92.0
+  friend 1, class 7: 92.0
+  friend 1, class 8: 92.0
+  friend 1, class 9: 92.0
+  friend 2, class 0: 92.0
+  friend 2, class 1: 92.0
+  friend 2, class 2: 92.0
+  friend 2, class 3: 92.0
+  friend 2, class 4: 92.0
+  friend 2, class 5: 92.0
+  friend 2, class 6: 92.0
+  friend 2, class 7: 92.0
+  friend 2, class 8: 92.0
+  friend 2, class 9: 92.0
+  friend 3, class 0: 92.0
+  friend 3, class 1: 92.0
+  friend 3, class 2: 92.0
+  friend 3, class 3: 92.0
+  friend 3, class 4: 92.0
+  friend 3, class 5: 92.0
+  friend 3, class 6: 92.0
+  friend 3, class 7: 92.0
+  friend 3, class 8: 92.0
+  friend 3, class 9: 92.0
+  friend 4, class 0: 92.0
+  friend 4, class 1: 92.0
+  friend 4, class 2: 92.0
+  friend 4, class 3: 92.0
+  friend 4, class 4: 92.0
+  friend 4, class 5: 92.0
+  friend 4, class 6: 92.0
+  friend 4, class 7: 92.0
+  friend 4, class 8: 92.0
+  friend 4, class 9: 92.0
+  me, class 0: 92.0
+  me, class 1: 92.0
+  me, class 2: 92.0
+  me, class 3: 92.0
+  me, class 4: 92.0
+  me, class 5: 92.0
+  me, class 6: 92.0
+  me, class 7: 92.0
+  me, class 8: 92.0
+  me, class 9: 92.0
+
+Per person:
+  friend 1: 920.0
+  friend 2: 920.0
+  friend 3: 920.0
+  friend 4: 920.0
+  me: 920.0
+
+Per class:
+  Class 0: 460.0
+  Class 1: 460.0
+  Class 2: 460.0
+  Class 3: 460.0
+  Class 4: 460.0
+  Class 5: 460.0
+  Class 6: 460.0
+  Class 7: 460.0
+  Class 8: 460.0
+  Class 9: 460.0
